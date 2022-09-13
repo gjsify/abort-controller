@@ -1,32 +1,52 @@
 import {
-    // Event,
     EventTarget,
-    // Type,
-    defineEventAttribute,
-} from "event-target-shim"
+    getEventAttributeValue,
+    setEventAttributeValue,
+    Event,
+} from "@gjsify/event-target"
 
 // Known Limitation
 //   Use `any` because the type of `AbortSignal` in `lib.dom.d.ts` is wrong and
 //   to make assignable our `AbortSignal` into that.
 //   https://github.com/Microsoft/TSJS-lib-generator/pull/623
 type Events = {
-    abort: any // Event & Type<"abort">
-}
-type EventAttributes = {
-    onabort: any // Event & Type<"abort">
+    abort: Event<"abort">
 }
 
 /**
  * The signal class.
  * @see https://dom.spec.whatwg.org/#abortsignal
  */
-export default class AbortSignal extends EventTarget<Events, EventAttributes> {
+// @ts-ignore
+export default class GjsifyAbortSignal extends EventTarget<Events> implements AbortSignal {
+
+    // TODO:
+    readonly reason: any = undefined;
+    // TODO:
+    throwIfAborted(): void {
+        console.warn('AbortSignal.throwIfAborted')
+    }
+
+    get onabort() {
+        return getEventAttributeValue(this, "abort");
+    }
+
+    set onabort(callback: EventTarget.CallbackFunction<any, any> | null) {
+        setEventAttributeValue(this, "abort", callback);
+    }
+
     /**
      * AbortSignal cannot be constructed directly.
      */
-    public constructor() {
-        super()
-        throw new TypeError("AbortSignal cannot be constructed directly")
+    protected constructor(internal: boolean) {
+        super();
+        if(!internal) {
+            throw new TypeError("AbortSignal cannot be constructed directly");
+        }
+    }
+
+    public static _create() {
+        return new this(true);
     }
 
     /**
@@ -44,14 +64,14 @@ export default class AbortSignal extends EventTarget<Events, EventAttributes> {
         return aborted
     }
 }
-defineEventAttribute(AbortSignal.prototype, "abort")
 
 /**
  * Create an AbortSignal object.
  */
-export function createAbortSignal(): AbortSignal {
-    const signal = Object.create(AbortSignal.prototype)
-    EventTarget.call(signal)
+export function createAbortSignal(): GjsifyAbortSignal {
+    const signal = GjsifyAbortSignal._create();
+    // const signal = Object.create(GjsifyAbortSignal.prototype);
+    // TODO? EventTarget.call(signal)
     abortedFlags.set(signal, false)
     return signal
 }
@@ -59,29 +79,31 @@ export function createAbortSignal(): AbortSignal {
 /**
  * Abort a given signal.
  */
-export function abortSignal(signal: AbortSignal): void {
+export function abortSignal(signal: GjsifyAbortSignal): void {
     if (abortedFlags.get(signal) !== false) {
         return
     }
 
     abortedFlags.set(signal, true)
-    signal.dispatchEvent<"abort">({ type: "abort" })
+    signal.dispatchEvent<"abort">(new Event("abort") as never) // TODO: Fix type
 }
 
 /**
  * Aborted flag for each instances.
  */
-const abortedFlags = new WeakMap<AbortSignal, boolean>()
+const abortedFlags = new WeakMap<GjsifyAbortSignal, boolean>()
 
 // Properties should be enumerable.
-Object.defineProperties(AbortSignal.prototype, {
+Object.defineProperties(GjsifyAbortSignal.prototype, {
     aborted: { enumerable: true },
 })
 
 // `toString()` should return `"[object AbortSignal]"`
 if (typeof Symbol === "function" && typeof Symbol.toStringTag === "symbol") {
-    Object.defineProperty(AbortSignal.prototype, Symbol.toStringTag, {
+    Object.defineProperty(GjsifyAbortSignal.prototype, Symbol.toStringTag, {
         configurable: true,
         value: "AbortSignal",
     })
 }
+
+export { GjsifyAbortSignal as AbortSignal }

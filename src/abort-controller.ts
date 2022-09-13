@@ -1,10 +1,10 @@
-import AbortSignal, { abortSignal, createAbortSignal } from "./abort-signal"
+import AbortSignal, { abortSignal, createAbortSignal } from "./abort-signal.js";
 
 /**
  * The AbortController.
  * @see https://dom.spec.whatwg.org/#abortcontroller
  */
-export default class AbortController {
+export default class GjsifyAbortController implements AbortController {
     /**
      * Initialize this controller.
      */
@@ -30,12 +30,12 @@ export default class AbortController {
 /**
  * Associated signals.
  */
-const signals = new WeakMap<AbortController, AbortSignal>()
+const signals = new WeakMap<GjsifyAbortController, AbortSignal>()
 
 /**
  * Get the associated signal of a given controller.
  */
-function getSignal(controller: AbortController): AbortSignal {
+function getSignal(controller: GjsifyAbortController): AbortSignal {
     const signal = signals.get(controller)
     if (signal == null) {
         throw new TypeError(
@@ -48,16 +48,16 @@ function getSignal(controller: AbortController): AbortSignal {
 }
 
 // Properties should be enumerable.
-Object.defineProperties(AbortController.prototype, {
+Object.defineProperties(GjsifyAbortController.prototype, {
     signal: { enumerable: true },
     abort: { enumerable: true },
 })
 
 if (typeof Symbol === "function" && typeof Symbol.toStringTag === "symbol") {
-    Object.defineProperty(AbortController.prototype, Symbol.toStringTag, {
+    Object.defineProperty(GjsifyAbortController.prototype, Symbol.toStringTag, {
         configurable: true,
         value: "AbortController",
     })
 }
 
-export { AbortController, AbortSignal }
+export { GjsifyAbortController as AbortController, AbortSignal }

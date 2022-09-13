@@ -1,3 +1,8 @@
+# @gjsify/abort-controller
+
+An implementation of WHATWG AbortController interface for Gjs.
+
+# Original README
 # abort-controller
 
 [![npm version](https://img.shields.io/npm/v/abort-controller.svg)](https://www.npmjs.com/package/abort-controller)
