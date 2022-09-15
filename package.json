@@ -4,13 +4,12 @@
   "description": "An implementation of WHATWG AbortController interface for Gjs",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
+  "browser": "lib/esm/index.js",
+  "types": "lib/types/index.d.ts",
   "type": "module",
   "files": [
-    "dist",
-    "polyfill.*",
-    "browser.*"
+    "lib"
   ],
-  "browser": "./browser.js",
   "scripts": {
     "clear": "rm -rf lib",
     "build": "yarn run build:gjsify && yarn run build:types",
