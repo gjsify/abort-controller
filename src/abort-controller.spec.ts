@@ -8,7 +8,7 @@ export const AbortSignal = globalThis.AbortSignal || GjsifyAbortSignal;
 
 const HAS_EVENT_TARGET_INTERFACE = typeof EventTarget !== "undefined"
 
-export default async () => {
+export const AbortControllerTest = async () => {
 
 	// Credits https://github.com/mysticatea/abort-controller/tree/master/test
 

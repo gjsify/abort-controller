@@ -6,7 +6,7 @@ import { AbortSignal as GjsifyAbortSignal } from './abort-signal.js';
 export const AbortSignal = globalThis.AbortSignal || GjsifyAbortSignal;
 
 
-export default async () => {
+export const AbortSignalTest = async () => {
 
 	// Credits https://github.com/mysticatea/abort-controller/tree/master/test
 
